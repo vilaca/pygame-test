@@ -11,11 +11,11 @@ GAME_WIDTH = SCREEN_WIDTH * 8  # Extended game area
 FPS = 60
 
 # Colors
-CYAN = (64, 200, 255)
-RED = (255, 0, 0)
+SKY_COLOR = (64, 200, 255)
+PLAYER_COLOR = (255, 176, 176)
 GREEN = (64, 200, 64)
-DARK_YELLOW = (255, 204, 64)
-WHITE = (255, 255, 255)
+FOE_COLOR = (255, 32, 64)
+WHITE = (240, 255, 240)
 
 # Screen setup
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
@@ -52,7 +52,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.Surface((50, 100))
-        self.image.fill(RED)
+        self.image.fill(PLAYER_COLOR)
         self.rect = self.image.get_rect()
         self.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.speed = 5
@@ -133,7 +133,7 @@ class Foe(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, min_x, max_x):
         super().__init__()
         self.image = pygame.Surface((width*1.5, height*1.5))
-        self.image.fill(DARK_YELLOW)
+        self.image.fill(FOE_COLOR)
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.speed = 2
@@ -265,7 +265,7 @@ def main():
 
         camera.update(player)
 
-        screen.fill(CYAN)
+        screen.fill(SKY_COLOR)
         for sprite in all_sprites:
             screen.blit(sprite.image, camera.apply(sprite))
 
