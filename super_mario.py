@@ -177,9 +177,8 @@ class Camera:
         y = -target.rect.centery + int(SCREEN_HEIGHT / 2)
         x = min(0, x)
         x = max(-(self.width - SCREEN_WIDTH), x)
-        y = min(0, y)
         y = max(-(self.height - SCREEN_HEIGHT), y)
-        self.camera = pygame.Rect(x, y, self.width, self.height)
+        self.camera = pygame.Rect(x, y/3, self.width, self.height)
 
 def main():
     player = Player()
@@ -202,6 +201,11 @@ def main():
         (5400, 400, 200, 50), (5800, 250, 200, 50), (6200, 500, 200, 50),
         (6600, 750, 200, 50)
     ]
+    # Additional higher platforms
+    static_platforms.extend([
+        (200, 400, 200, 50), (500, 300, 200, 50), (900, 200, 200, 50),
+        (1300, 100, 200, 50), (1700, 200, 200, 50), (2100, 300, 200, 50)
+    ])
     for x, y, w, h in static_platforms:
         plat = Platform(x, y, w, h, WHITE, True)
         platforms.add(plat)
