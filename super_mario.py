@@ -13,8 +13,8 @@ FPS = 60
 # Colors
 CYAN = (64, 200, 255)
 RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-DARK_YELLOW = (204, 204, 0)
+GREEN = (64, 200, 64)
+DARK_YELLOW = (255, 204, 64)
 WHITE = (255, 255, 255)
 
 # Screen setup
@@ -44,14 +44,14 @@ def game_over_screen():
                 if event.key == pygame.K_r:
                     waiting = False
                     main()
-                elif event.key == pygame.K_q:
+                elif event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((50, 50))
+        self.image = pygame.Surface((50, 100))
         self.image.fill(RED)
         self.rect = self.image.get_rect()
         self.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
@@ -132,7 +132,7 @@ class MovingPlatform(Platform):
 class Foe(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, min_x, max_x):
         super().__init__()
-        self.image = pygame.Surface((width, height))
+        self.image = pygame.Surface((width*1.5, height*1.5))
         self.image.fill(DARK_YELLOW)
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
@@ -142,7 +142,7 @@ class Foe(pygame.sprite.Sprite):
         self.vel_y = 0
         self.on_ground = False
         self.min_x = min_x
-        self.max_x = max_x
+        self.max_x = max_x + width
         self.on_moving_platform = None
 
     def update(self, platforms, _):
@@ -261,7 +261,7 @@ def main():
             delta_x = platform.update()
             for entity in [player] + [foe for foe in foes]:
                 if entity.on_moving_platform == platform:
-                    entity.rect.x += delta_x * 2.5
+                    entity.rect.x += delta_x * 2
 
         camera.update(player)
 
