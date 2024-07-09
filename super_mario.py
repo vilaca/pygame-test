@@ -11,7 +11,7 @@ GAME_WIDTH = SCREEN_WIDTH * 8  # Extended game area
 FPS = 60
 
 # Colors
-CYAN = (0, 255, 255)
+CYAN = (64, 200, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 DARK_YELLOW = (204, 204, 0)
@@ -261,7 +261,7 @@ def main():
             delta_x = platform.update()
             for entity in [player] + [foe for foe in foes]:
                 if entity.on_moving_platform == platform:
-                    entity.rect.x += delta_x * 2
+                    entity.rect.x += delta_x * 2.5
 
         camera.update(player)
 
