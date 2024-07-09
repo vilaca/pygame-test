@@ -69,17 +69,22 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT]:
             self.rect.x += self.speed
 
-        self.vel_y += self.gravity
-        self.rect.y += self.vel_y
+        if self.on_ground:
+            self.image.fill((255, 176, 176))
+        else:
+            self.image.fill((255, 128 , 128))
 
-        self.on_ground = False
+        self.vel_y += -self.gravity
+        self.rect.y -= self.vel_y
+
+        #self.on_ground = False
         self.on_moving_platform = None
         self.check_platforms(platforms)
         self.check_foes(foes)
 
     def check_platforms(self, platforms):
         for platform in platforms:
-            if self.rect.colliderect(platform.rect) and self.vel_y > 0:
+            if self.rect.colliderect(platform.rect) and self.vel_y < 0:
                 self.rect.bottom = platform.rect.top
                 self.vel_y = 0
                 self.on_ground = True
@@ -89,7 +94,8 @@ class Player(pygame.sprite.Sprite):
     def check_foes(self, foes):
         foe_hit_list = pygame.sprite.spritecollide(self, foes, False)
         for foe in foe_hit_list:
-            if self.vel_y > 0 and self.rect.bottom <= foe.rect.top + self.vel_y:
+            #if self.vel_y > 0 and self.rect.bottom <= foe.rect.top + self.vel_y:
+            if self.rect.bottom <= foe.rect.top - self.vel_y:
                 self.vel_y = -self.jump_speed
                 foe.kill()
                 self.on_ground = False
@@ -99,20 +105,20 @@ class Player(pygame.sprite.Sprite):
 
     def jump(self):
         if self.on_ground:
-            self.vel_y = -self.jump_speed
+            self.vel_y = self.jump_speed
             self.on_ground = False
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, color=WHITE, rounded=False):
         super().__init__()
         self.image = pygame.Surface((width, height), pygame.SRCALPHA)
-        self.image.fill((0, 0, 0, 0))
+        #self.image.fill((0, 0, 0, 0))
         if rounded:
             pygame.draw.ellipse(self.image, color, self.image.get_rect())
         else:
             self.image.fill(color)
         self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
+        self.rect.topleft = (x, SCREEN_HEIGHT -y)
 
 class MovingPlatform(Platform):
     def __init__(self, x, y, width, height, boundary_left, boundary_right, speed):
@@ -150,13 +156,13 @@ class Foe(pygame.sprite.Sprite):
         if self.rect.x < self.min_x or self.rect.x > self.max_x:
             self.direction *= -1
 
-        self.vel_y += self.gravity
-        self.rect.y += self.vel_y
+        self.vel_y += -self.gravity
+        self.rect.y -= self.vel_y
 
         self.on_ground = False
         self.on_moving_platform = None
         for platform in platforms:
-            if self.rect.colliderect(platform.rect) and self.vel_y > 0:
+            if self.rect.colliderect(platform.rect):# and self.vel_y > 0:
                 self.rect.bottom = platform.rect.top
                 self.vel_y = 0
                 self.on_ground = True
@@ -177,8 +183,9 @@ class Camera:
         y = -target.rect.centery + int(SCREEN_HEIGHT / 2)
         x = min(0, x)
         x = max(-(self.width - SCREEN_WIDTH), x)
-        y = max(-(self.height - SCREEN_HEIGHT), y)
-        self.camera = pygame.Rect(x, y/3, self.width, self.height)
+        #y = max(-(self.height - SCREEN_HEIGHT), y)
+        y = max(0, y)
+        self.camera = pygame.Rect(x, y, self.width, self.height)
 
 def main():
     player = Player()
@@ -188,13 +195,18 @@ def main():
     all_sprites = pygame.sprite.Group(player)
 
     # Ground platform
-    ground = Platform(0, SCREEN_HEIGHT - 50, GAME_WIDTH, 50, GREEN)
+    ground = Platform(0, 50, GAME_WIDTH, 50, GREEN)
     platforms.add(ground)
     all_sprites.add(ground)
 
     # Static platforms
     static_platforms = [
-        (300, 750, 200, 50), (800, 600, 200, 50), (1400, 450, 200, 50),
+        (300, 750, 200, 50), 
+        (300, 1050, 200, 50), 
+        (300, 1350, 200, 50), 
+        (300, 1650, 200, 50), 
+        
+        (800, 600, 200, 50), (1400, 450, 200, 50),
         (1800, 700, 200, 50), (2200, 500, 200, 50), (2600, 350, 200, 50),
         (3000, 600, 200, 50), (3400, 750, 200, 50), (3800, 500, 200, 50),
         (4200, 650, 200, 50), (4600, 300, 200, 50), (5000, 550, 200, 50),
@@ -225,7 +237,7 @@ def main():
 
     # Foes with specific movement ranges
     foe_positions = [
-        (300, SCREEN_HEIGHT - 150, 200, 600), (1600, 250, 1500, 1700),
+        (300, 250, 200, 600), (1600, 250, 1500, 1700),
         (2600, 450, 2500, 2700), (1200, 380, 1100, 1300), (4500, 500, 4400, 4600),
         (5500, 300, 5400, 5600), (500, 760, 400, 800), (1200, 260, 1100, 1500)
     ]
