@@ -5,8 +5,8 @@ import sys
 pygame.init()
 
 # Constants
-SCREEN_WIDTH = 1920
-SCREEN_HEIGHT = 1080
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 1024
 GAME_WIDTH = SCREEN_WIDTH * 8  # Extended game area
 FPS = 60
 
@@ -18,7 +18,8 @@ DARK_YELLOW = (204, 204, 0)
 WHITE = (255, 255, 255)
 
 # Screen setup
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
+SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
 pygame.display.set_caption("Super Mario Bros")
 
 # Clock and Font
@@ -256,7 +257,7 @@ def main():
             delta_x = platform.update()
             for entity in [player] + [foe for foe in foes]:
                 if entity.on_moving_platform == platform:
-                    entity.rect.x += delta_x
+                    entity.rect.x += delta_x * 2
 
         camera.update(player)
 
