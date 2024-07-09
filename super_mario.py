@@ -24,16 +24,16 @@ pygame.display.set_caption("Super Mario Bros")
 
 # Clock and Font
 clock = pygame.time.Clock()
-font = pygame.font.SysFont("Arial", 36)
+font = pygame.font.SysFont("Arial", 72)
 
 def display_message(message):
-    text = font.render(message, True, (255, 255, 255))
+    text = font.render(message, True, (0, 0, 0))
     text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
     screen.blit(text, text_rect)
     pygame.display.flip()
 
 def game_over_screen():
-    display_message("Game Over! Press R to Restart or Q to Quit")
+    display_message("Press R to Restart or Q to Quit")
     waiting = True
     while waiting:
         for event in pygame.event.get():
@@ -202,9 +202,9 @@ def main():
     # Static platforms
     static_platforms = [
         (300, 750, 200, 50), 
-        (300, 1050, 200, 50), 
-        (300, 1350, 200, 50), 
-        (300, 1650, 200, 50), 
+        (350, 1050, 400, 50), 
+        (400, 1350, 300, 50), 
+        (500, 1650, 200, 50), 
         
         (800, 600, 200, 50), (1400, 450, 200, 50),
         (1800, 700, 200, 50), (2200, 500, 200, 50), (2600, 350, 200, 50),
@@ -257,7 +257,7 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     player.jump()
-                elif event.key == pygame.K_ESCAPE:
+                elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                     pygame.quit()
                     sys.exit()
 
