@@ -15,6 +15,7 @@ CYAN = (0, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 DARK_YELLOW = (204, 204, 0)
+WHITE = (255, 255, 255)
 
 # Screen setup
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -101,16 +102,20 @@ class Player(pygame.sprite.Sprite):
             self.on_ground = False
 
 class Platform(pygame.sprite.Sprite):
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, color=WHITE, rounded=False):
         super().__init__()
-        self.image = pygame.Surface((width, height))
-        self.image.fill(GREEN)
+        self.image = pygame.Surface((width, height), pygame.SRCALPHA)
+        self.image.fill((0, 0, 0, 0))
+        if rounded:
+            pygame.draw.ellipse(self.image, color, self.image.get_rect())
+        else:
+            self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
 class MovingPlatform(Platform):
     def __init__(self, x, y, width, height, boundary_left, boundary_right, speed):
-        super().__init__(x, y, width, height)
+        super().__init__(x, y, width, height, WHITE, True)
         self.boundary_left = boundary_left
         self.boundary_right = boundary_right
         self.speed = speed
@@ -183,29 +188,29 @@ def main():
     all_sprites = pygame.sprite.Group(player)
 
     # Ground platform
-    ground = Platform(0, SCREEN_HEIGHT - 50, GAME_WIDTH, 50)
+    ground = Platform(0, SCREEN_HEIGHT - 50, GAME_WIDTH, 50, GREEN)
     platforms.add(ground)
     all_sprites.add(ground)
 
     # Static platforms
     static_platforms = [
-        (300, 750, 200, 20), (800, 600, 200, 20), (1400, 450, 200, 20),
-        (1800, 700, 200, 20), (2200, 500, 200, 20), (2600, 350, 200, 20),
-        (3000, 600, 200, 20), (3400, 750, 200, 20), (3800, 500, 200, 20),
-        (4200, 650, 200, 20), (4600, 300, 200, 20), (5000, 550, 200, 20),
-        (5400, 400, 200, 20), (5800, 250, 200, 20), (6200, 500, 200, 20),
-        (6600, 750, 200, 20)
+        (300, 750, 200, 50), (800, 600, 200, 50), (1400, 450, 200, 50),
+        (1800, 700, 200, 50), (2200, 500, 200, 50), (2600, 350, 200, 50),
+        (3000, 600, 200, 50), (3400, 750, 200, 50), (3800, 500, 200, 50),
+        (4200, 650, 200, 50), (4600, 300, 200, 50), (5000, 550, 200, 50),
+        (5400, 400, 200, 50), (5800, 250, 200, 50), (6200, 500, 200, 50),
+        (6600, 750, 200, 50)
     ]
     for x, y, w, h in static_platforms:
-        plat = Platform(x, y, w, h)
+        plat = Platform(x, y, w, h, WHITE, True)
         platforms.add(plat)
         all_sprites.add(plat)
 
     # Moving platforms
     moving_platform_details = [
-        (500, 800, 300, 20, 400, 800, 2), (1200, 300, 300, 20, 1100, 1500, 3),
-        (2300, 450, 300, 20, 2200, 2600, 2), (3400, 500, 300, 20, 3300, 3700, 4),
-        (4500, 700, 300, 20, 4400, 4800, 2), (5700, 400, 300, 20, 5600, 6000, 3)
+        (500, 800, 300, 50, 400, 800, 2), (1200, 300, 300, 50, 1100, 1500, 3),
+        (2300, 450, 300, 50, 2200, 2600, 2), (3400, 500, 300, 50, 3300, 3700, 4),
+        (4500, 700, 300, 50, 4400, 4800, 2), (5700, 400, 300, 50, 5600, 6000, 3)
     ]
     for x, y, w, h, min_x, max_x, speed in moving_platform_details:
         mplat = MovingPlatform(x, y, w, h, min_x, max_x, speed)
@@ -251,7 +256,7 @@ def main():
             delta_x = platform.update()
             for entity in [player] + [foe for foe in foes]:
                 if entity.on_moving_platform == platform:
-                    entity.rect.x += delta_x * 2
+                    entity.rect.x += delta_x
 
         camera.update(player)
 
