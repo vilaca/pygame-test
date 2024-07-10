@@ -90,6 +90,8 @@ class Player(pygame.sprite.Sprite):
                 self.on_ground = True
                 if isinstance(platform, MovingPlatform):
                     self.on_moving_platform = platform
+                    self.rect.x += platform.speed * platform.direction
+
 
     def check_foes(self, foes):
         foe_hit_list = pygame.sprite.spritecollide(self, foes, False)
@@ -168,6 +170,7 @@ class Foe(pygame.sprite.Sprite):
                 self.on_ground = True
                 if isinstance(platform, MovingPlatform):
                     self.on_moving_platform = platform
+                    self.rect.x += platform.speed * platform.direction
 
 class Camera:
     def __init__(self, width, height):
@@ -269,11 +272,11 @@ def main():
                 sprite.update()
 
         # Move entities with their platforms
-        for platform in moving_platforms:
-            delta_x = platform.update()
-            for entity in [player] + [foe for foe in foes]:
-                if entity.on_moving_platform == platform:
-                    entity.rect.x += delta_x * 2
+        # for platform in moving_platforms:
+        #     delta_x = platform.update()
+        #     for entity in [player] + [foe for foe in foes]:
+        #         if entity.on_moving_platform == platform:
+        #             entity.rect.x += delta_x * 2
 
         camera.update(player)
 
