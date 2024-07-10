@@ -83,8 +83,8 @@ class Player(pygame.sprite.Sprite):
         self.check_foes(foes)
 
     def check_platforms(self, platforms):
-        for platform in platforms:
-            if self.rect.colliderect(platform.rect) and self.vel_y < 0:
+        for platform in pygame.sprite.spritecollide(self, platforms, False):
+            if self.vel_y < 0:
                 self.rect.bottom = platform.rect.top
                 self.vel_y = 0
                 self.on_ground = True
@@ -163,14 +163,14 @@ class Foe(pygame.sprite.Sprite):
 
         self.on_ground = False
         self.on_moving_platform = None
-        for platform in platforms:
-            if self.rect.colliderect(platform.rect):# and self.vel_y > 0:
-                self.rect.bottom = platform.rect.top
-                self.vel_y = 0
-                self.on_ground = True
-                if isinstance(platform, MovingPlatform):
-                    self.on_moving_platform = platform
-                    self.rect.x += platform.speed * platform.direction
+        for platform in pygame.sprite.spritecollide(self, platforms, False):
+            #if self.rect.colliderect(platform.rect):# and self.vel_y > 0:
+            self.rect.bottom = platform.rect.top
+            self.vel_y = 0
+            self.on_ground = True
+            if isinstance(platform, MovingPlatform):
+                self.on_moving_platform = platform
+                self.rect.x += platform.speed * platform.direction
 
 class Camera:
     def __init__(self, width, height):
