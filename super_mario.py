@@ -91,7 +91,8 @@ class Player(pygame.sprite.Sprite):
                 if isinstance(platform, MovingPlatform):
                     self.on_moving_platform = platform
                     self.rect.x += platform.speed * platform.direction
-
+            return
+        self.on_ground = False
 
     def check_foes(self, foes):
         foe_hit_list = pygame.sprite.spritecollide(self, foes, False)
@@ -188,6 +189,10 @@ class Camera:
         x = max(-(self.width - SCREEN_WIDTH), x)
         #y = max(-(self.height - SCREEN_HEIGHT), y)
         y = max(0, y)
+#       x = -x
+#       x -= x % (SCREEN_WIDTH * .8)
+#       x += SCREEN_WIDTH / 2.5
+#       x = -x
         self.camera = pygame.Rect(x, y, self.width, self.height)
 
 def main():
