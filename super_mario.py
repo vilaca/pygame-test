@@ -153,7 +153,7 @@ class Foe(pygame.sprite.Sprite):
         self.max_x = max_x + width
         self.on_moving_platform = None
 
-    def update(self, platforms, _):
+    def update(self, platforms):
         self.rect.x += self.speed * self.direction
         if self.rect.x < self.min_x or self.rect.x > self.max_x:
             self.direction *= -1
@@ -204,36 +204,38 @@ def main():
 
     # Static platforms
     static_platforms = [
-        (300, 750, 200, 50), 
-        (350, 1050, 400, 50), 
-        (400, 1350, 300, 50), 
-        (500, 1650, 200, 50), 
+        (300, 750), 
+        (350, 1050), 
+        (400, 1350), 
+        (500, 1650), 
+        (500, 1950), 
+        (550, 2250), 
         
-        (800, 600, 200, 50), (1400, 450, 200, 50),
-        (1800, 700, 200, 50), (2200, 500, 200, 50), (2600, 350, 200, 50),
-        (3000, 600, 200, 50), (3400, 750, 200, 50), (3800, 500, 200, 50),
-        (4200, 650, 200, 50), (4600, 300, 200, 50), (5000, 550, 200, 50),
-        (5400, 400, 200, 50), (5800, 250, 200, 50), (6200, 500, 200, 50),
-        (6600, 750, 200, 50)
+        (800, 600), (1400, 450),
+        (1800, 700), (2200, 500), (2600, 350),
+        (3000, 600), (3400, 750), (3800, 500),
+        (4200, 650), (4600, 300), (5000, 550),
+        (5400, 400), (5800, 250), (6200, 500),
+        (6600, 750)
     ]
     # Additional higher platforms
     static_platforms.extend([
-        (200, 400, 200, 50), (500, 300, 200, 50), (900, 200, 200, 50),
-        (1300, 100, 200, 50), (1700, 200, 200, 50), (2100, 300, 200, 50)
+        (200, 400), (500, 300), (900, 200),
+        (1300, 100), (1700, 200), (2100, 300)
     ])
-    for x, y, w, h in static_platforms:
-        plat = Platform(x, y, w, h, WHITE, True)
+    for x, y in static_platforms:
+        plat = Platform(x, y, 200, 50, WHITE, True)
         platforms.add(plat)
         all_sprites.add(plat)
 
     # Moving platforms
     moving_platform_details = [
-        (500, 800, 300, 50, 400, 800, 2), (1200, 300, 300, 50, 1100, 1500, 3),
-        (2300, 450, 300, 50, 2200, 2600, 2), (3400, 500, 300, 50, 3300, 3700, 4),
-        (4500, 700, 300, 50, 4400, 4800, 2), (5700, 400, 300, 50, 5600, 6000, 3)
+        (500, 800, 400, 800, 2), (1200, 300, 1100, 1500, 3),
+        (2300, 450, 2200, 2600, 2), (3400, 500, 3300, 3700, 4),
+        (4500, 700, 4400, 4800, 2), (5700, 400, 5600, 6000, 3)
     ]
-    for x, y, w, h, min_x, max_x, speed in moving_platform_details:
-        mplat = MovingPlatform(x, y, w, h, min_x, max_x, speed)
+    for x, y, min_x, max_x, speed in moving_platform_details:
+        mplat = MovingPlatform(x, y, 300, 50, min_x, max_x, speed)
         moving_platforms.add(mplat)
         platforms.add(mplat)
         all_sprites.add(mplat)
@@ -266,21 +268,16 @@ def main():
 
         # Update all sprites
         for sprite in all_sprites:
-            if isinstance(sprite, Player) or isinstance(sprite, Foe):
+            if isinstance(sprite, Player):
                 sprite.update(platforms, foes)
+            elif isinstance(sprite, Foe):
+                sprite.update(platforms)
             elif isinstance(sprite, MovingPlatform):
                 sprite.update()
 
-        # Move entities with their platforms
-        # for platform in moving_platforms:
-        #     delta_x = platform.update()
-        #     for entity in [player] + [foe for foe in foes]:
-        #         if entity.on_moving_platform == platform:
-        #             entity.rect.x += delta_x * 2
-
         camera.update(player)
 
-        screen.fill(SKY_COLOR)
+        screen.fill((64, 200 , 255))
         for sprite in all_sprites:
             screen.blit(sprite.image, camera.apply(sprite))
 
