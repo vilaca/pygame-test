@@ -60,7 +60,7 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 0.5
         self.vel_y = 0
         self.on_ground = False
-        self.on_moving_platform = None
+        #self.on_moving_platform = None
 
     def update(self, platforms, foes):
         keys = pygame.key.get_pressed()
@@ -78,21 +78,21 @@ class Player(pygame.sprite.Sprite):
         self.rect.y -= self.vel_y
 
         #self.on_ground = False
-        self.on_moving_platform = None
+        #self.on_moving_platform = None
         self.check_platforms(platforms)
         self.check_foes(foes)
 
     def check_platforms(self, platforms):
+        if self.vel_y > 0:
+            return
         for platform in pygame.sprite.spritecollide(self, platforms, False):
             if self.vel_y < 0:
                 self.rect.bottom = platform.rect.top
                 self.vel_y = 0
                 self.on_ground = True
                 if isinstance(platform, MovingPlatform):
-                    self.on_moving_platform = platform
+                    #self.on_moving_platform = platform
                     self.rect.x += platform.speed * platform.direction
-            return
-        self.on_ground = False
 
     def check_foes(self, foes):
         foe_hit_list = pygame.sprite.spritecollide(self, foes, False)
@@ -107,7 +107,7 @@ class Player(pygame.sprite.Sprite):
                 game_over_screen()
 
     def jump(self):
-        if self.on_ground:
+        if self.on_ground and not self.vel_y < 0:
             self.vel_y = self.jump_speed
             self.on_ground = False
 
@@ -152,7 +152,7 @@ class Foe(pygame.sprite.Sprite):
         self.on_ground = False
         self.min_x = min_x
         self.max_x = max_x + width
-        self.on_moving_platform = None
+        #self.on_moving_platform = None
 
     def update(self, platforms):
         self.rect.x += self.speed * self.direction
@@ -163,7 +163,7 @@ class Foe(pygame.sprite.Sprite):
         self.rect.y -= self.vel_y
 
         self.on_ground = False
-        self.on_moving_platform = None
+        #self.on_moving_platform = None
         for platform in pygame.sprite.spritecollide(self, platforms, False):
             #if self.rect.colliderect(platform.rect):# and self.vel_y > 0:
             self.rect.bottom = platform.rect.top
