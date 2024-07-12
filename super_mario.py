@@ -43,7 +43,6 @@ def game_over_screen():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     waiting = False
-                    main()
                 elif event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
@@ -60,6 +59,7 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 0.5
         self.vel_y = 0
         self.on_ground = False
+        self.dead = False
         #self.on_moving_platform = None
 
     def update(self, platforms, foes):
@@ -104,7 +104,7 @@ class Player(pygame.sprite.Sprite):
                 self.on_ground = False
             else:
                 self.kill()
-                game_over_screen()
+                self.dead = True
 
     def jump(self):
         if self.on_ground and not self.vel_y < 0:
@@ -287,7 +287,14 @@ def main():
             screen.blit(sprite.image, camera.apply(sprite))
 
         pygame.display.flip()
+
         clock.tick(FPS)
 
+        if player.dead:
+            break
+
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
+        game_over_screen()
+
